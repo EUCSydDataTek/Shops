@@ -56,6 +56,8 @@ Indsæt koden under linje 2 i `Program.cs`
 services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMemoryDb"));
 ```
 
+> Du skal muligvis lave nogle projekt referencer til ServiceLayer og DataLayer Da den skal bruge `AppDbContext` som dependency.
+
 ## 5. ServiceLayer
 
 Skal være tom for nu.

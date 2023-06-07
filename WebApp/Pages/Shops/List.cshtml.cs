@@ -8,6 +8,9 @@ namespace MyApp.Namespace
     public class ListModel : PageModel
     {
         public IEnumerable<Shop> Shops { get; set; }
+
+        [BindProperty(SupportsGet = true)] // 👈 Ny
+        public string SearchTerm { get; set; } // 👈 Ny
   
         private readonly IShopService _ShopService = default!;
     
@@ -19,7 +22,7 @@ namespace MyApp.Namespace
     
         public void OnGet()
         {
-            Shops = _ShopService.GetShops().ToList();
+            Shops = _ShopService.GetShopsByName(SearchTerm).ToList();
         }
     }
 }

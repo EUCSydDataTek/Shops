@@ -1,156 +1,72 @@
-# List of Shops
+# Model Binding
 
-## Oversigt:
+Der oprettes en mulighed for at søge (første del af navnet og case-sensitivt):
 
-* Opretelse af Entities
-* Data Seeding
-* Service interface, class and methods
-* ListView og Dependency Injection
-* Lave en Custom Default Route
 
-## Oprettelse af Entities
-
-* I DataLayer opret en mappe med navn `Entities`.
-* Opret følgende klasser med indhold i mappen.
-
-### ShopType.cs
-```C#
-    public class ShopType
-    {
-        public int ShopTypeId { get; set; }
-
-        public string Name { get; set; } = string.Empty;
-    }
-```
-
-### ShopReview.cs
-```C#
-    public class ShopReview
-    {
-        public int ShopReviewId { get; set; }
-
-        public string subject { get; set; } = default!;
-
-        public string text { get; set; } = default!;
-
-        public short Stars { get; set; }
-    }
-```
-
-### Shop.cs
-```C#
-    public class Shop
-    {
-        public int ShopId { get; set; }
-
-        public string Name { get; set; } = string.Empty;
-
-        public int ShopTypeId { get; set; }
-
-        public string Location { get; set; } = string.Empty;
-
-        public ShopType Type { get; set; } = default!;
-
-    }
-```
-
-## Data Seeding
-
-### AppDbContext.cs
-
-Indsæt disse properties til `AppDbContext`.
-
-```C#
-    public DbSet<Shop> Shops { get; set; }
-    public DbSet<ShopType> ShopTypes { get; set; }
-    public DbSet<ShopReview> ShopReviews { get; set; }
-```
-
-Indsæt derefter kode i `OnModelCreating` metoden.
-```C#
-    modelBuilder.Entity<ShopType>().HasData(
-        new ShopType { ShopTypeId = 1, Name = "Electronics" },
-        new ShopType { ShopTypeId = 2, Name = "Furniture" },
-        new ShopType { ShopTypeId = 3, Name = "Restaurant" },
-        new ShopType { ShopTypeId = 4, Name = "Bakery"}
-        );
-
-    modelBuilder.Entity<Shop>().HasData(
-        new Shop() { ShopId = 1, ShopTypeId = 1 , Name = "Power", Location = "Odense" },
-        new Shop() { ShopId = 2, ShopTypeId = 3 , Name = "Skaal", Location = "S�nderborg" },
-        new Shop() { ShopId = 3, ShopTypeId = 4, Name = "Lagkagehuset", Location = "Aabenraa" },
-        new Shop() { ShopId = 4, ShopTypeId = 2, Name = "Ikea", Location = "Odense" },
-        new Shop() { ShopId = 5, ShopTypeId = 2, Name = "Jysk", Location = "Esbjerg" }
-        );
-```
-
+---
 ## ServiceLayer
+ShopService udvides med en metode, der kan tage imod en søgeparameter:
 
-Opret interface og impementering af en service i Servicelayer
-
-### `ShopService.cs`
+_IShopService.cs_
 ```C#
-    public class ShopService
+public interface IShopService
+{
+    public IQueryable<Shop> GetShops();
+    public IQueryable<Shop> GetShopsByName(string? name = null); // 👈 Ny kode
+}
+```
+Her er implementationen i servicen:
+
+_ShopService.cs_
+```C#
+    public IQueryable<Shop> GetShopsByName(string? name = null) 
     {
-        private readonly AppDbContext _AppDbContext = default!;
-
-        public ShopService(AppDbContext appDbContext)
-        {
-            appDbContext.Database.EnsureCreated();
-            _AppDbContext = appDbContext;
-        }
-
-        public IQueryable<Shop> GetShops() 
-        {
-            return _AppDbContext.Shops.AsNoTracking();
-        }
+        return _AppDbContext.Shops
+                                .Include(s => s.Type)
+                                .Where(s => string.IsNullOrEmpty(name) || s.Name.StartsWith(name))
+                                .AsNoTracking();
     }
 ```
+---
+## WebApp
 
-### `IShopService.cs`
-```C#
-    public interface IShopService
-    {
-        public IQueryable<Shop> GetShops();
-    }
-```
-
-## Listview og dependency injection
-
-### Dependency injection
-
-Tilføj ShopService til dependency injection.
-```C#
-builder.Services.AddScoped<IShopService,ShopService>();
-``` 
-
-### Pages
-
-Opret en mappe inden i pages med navn `Shops`.
-
-Opret følgende side inden i mappen Kaldet `List`
-
-Derefter konfigurerer følgende sider
-
-#### `List.cshtml`
+### CSS
+tilføj linket til CSS-filen fra Font Awesome i `_Layout` filen
 ```html
-<table class="table">
-    @foreach (var shop in Model.Shops)
-    {
-        <tr>
-            <td>@shop.Name</td>
-            <td>@shop.Location</td>
-            <td>@shop.Type.Name</td>
-        </tr>
-    }
-</table>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+```
+> 📘 Hvis du vil have en nyere version af FontAwesome kan du få den på [https://cdnjs.com/libraries/font-awesome](https://cdnjs.com/libraries/font-awesome)
+
+### Html
+Tilføj en searchbox til List view. Med BootStrap laves en searchbox således:
+
+```html
+<form method="get">
+    <div class="input-group mb-3">
+        <input type="search" asp-for="SearchTerm" class="form-control">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</form>
 ```
 
-#### `List.cshtml.cs`
+> 📘 Man kan evt. demonstrere en input uden brug af `asp-for`, der så vil kræve både `id`, `name` og `value`:
+> ```html
+> <input type="search" id="SearchTerm" name="SearchTerm" value="@Model.SearchTerm">
+> ```
+> <br>
+---
+Her ses `PageModel`:
 ```C#
     public class ListModel : PageModel
     {
         public IEnumerable<Shop> Shops { get; set; }
+
+        [BindProperty(SupportsGet = true)] // 👈 Ny
+        public string SearchTerm { get; set; } // 👈 Ny
   
         private readonly IShopService _ShopService = default!;
     
@@ -159,23 +75,27 @@ Derefter konfigurerer følgende sider
             _ShopService = ShopService;
         }
     
-    
         public void OnGet()
         {
-            Shops = _ShopService.GetShops().ToList();
+            Shops = _ShopService.GetShopsByName(SearchTerm).ToList(); // 👈 Ændret
         }
     }
 ```
-## Configuration af Default Route
+Bemærk at der laves en TwoWay Databinding ved at tilføje `[BindProperty]` til SearchTerm. Og at den bringes til at supportere `GET`.
 
-I stedet for at lande på Index siden og skulle navigere til Shops/List siden, kan man oprette en Custom Default Route Page i `Program.cs`. Det sker ved at tilføje en RazorPagesOption til servicen, som vist her:
-```C#
-    builder.Services.AddRazorPages()
-                .AddRazorPagesOptions(options =>
-                {
-                    options.Conventions.AddPageRoute("/Shops/List", "");
-                });
-```
-
-Imidlertid er der en indbygget konvention som siger at siten altid skal begynde med Pages/Index og derfor bliver man nødt til at omdøbe Index pagen eller fjerne den.
+> 📘 Man man også vise to andre (og mindre smarte) måder: Uden Model Binding:
+> ```C#
+> string searchTerm = HttpContext.Request.QueryString.Value.Split('=').LastOrDefault();
+> ```
+> 
+> One-Way binding via parameter:
+> ```C#
+> public void OnGet(string searchTerm)
+> {
+>    Restaurants = _restaurantService.GetRestaurantsByName(searchTerm).ToList();
+> }
+> ```
+> <br>
+---
+## Detail page
 

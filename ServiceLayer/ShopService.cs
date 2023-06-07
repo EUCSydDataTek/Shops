@@ -17,4 +17,14 @@ public class ShopService : IShopService
     {
         return _AppDbContext.Shops.Include(s => s.Type).AsNoTracking();
     }
+
+    public IQueryable<Shop> GetShopsByName(string? name = null) 
+    {
+        return _AppDbContext.Shops
+                                .Include(s => s.Type)
+                                .Where(s => string.IsNullOrEmpty(name) || s.Name.StartsWith(name))
+                                .AsNoTracking();
+    }
+
+
 }

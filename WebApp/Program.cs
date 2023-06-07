@@ -1,13 +1,19 @@
 using System;
 using DataLayer;
 using Microsoft.EntityFrameworkCore;
+using ServiceLayer;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMemoryDb"));
+builder.Services.AddScoped<IShopService,ShopService>();
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages()
+                .AddRazorPagesOptions(options =>
+                {
+                    options.Conventions.AddPageRoute("/Shops/List", "/");
+                });
 
 var app = builder.Build();
 

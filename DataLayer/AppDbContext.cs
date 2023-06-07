@@ -12,9 +12,9 @@ namespace DataLayer
     public class AppDbContext : DbContext
     {
 
-        public DbSet<Shop> Shops { get; set; }
-        public DbSet<ShopType> ShopTypes { get; set; }
-        public DbSet<ShopReview> ShopReviews { get; set; }
+        public DbSet<Shop> Shops { get; set; } = default!;
+        public DbSet<ShopType> ShopTypes { get; set; } = default!;
+        public DbSet<ShopReview> ShopReviews { get; set; } = default!;
 
         public AppDbContext(DbContextOptions options) : base(options)
         {

@@ -1,0 +1,13 @@
+﻿@page
+@model MyApp.Namespace.ListModel
+
+<table class="table">
+    @foreach (var shop in Model.Shops)
+    {
+        <tr>
+            <td>@shop.Name</td>
+            <td>@shop.Location</td>
+            <td>@shop.Type.Name</td>
+        </tr>
+    }
+</table>

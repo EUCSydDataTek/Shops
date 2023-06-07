@@ -11,7 +11,7 @@
 ## Oprettelse af Entities
 
 * I DataLayer opret en mappe med navn `Entities`.
-* Opret følgende klasser med indhold i mappen.
+* Opret fÃ¸lgende klasser med indhold i mappen.
 
 ### ShopType.cs
 ```C#
@@ -58,7 +58,7 @@
 
 ### AppDbContext.cs
 
-Indsæt disse properties til `AppDbContext`.
+IndsÃ¦t disse properties til `AppDbContext`.
 
 ```C#
     public DbSet<Shop> Shops { get; set; }
@@ -66,7 +66,7 @@ Indsæt disse properties til `AppDbContext`.
     public DbSet<ShopReview> ShopReviews { get; set; }
 ```
 
-Indsæt derefter kode i `OnModelCreating` metoden.
+IndsÃ¦t derefter kode i `OnModelCreating` metoden.
 ```C#
     modelBuilder.Entity<ShopType>().HasData(
         new ShopType { ShopTypeId = 1, Name = "Electronics" },
@@ -77,10 +77,105 @@ Indsæt derefter kode i `OnModelCreating` metoden.
 
     modelBuilder.Entity<Shop>().HasData(
         new Shop() { ShopId = 1, ShopTypeId = 1 , Name = "Power", Location = "Odense" },
-        new Shop() { ShopId = 2, ShopTypeId = 3 , Name = "Skaal", Location = "Sønderborg" },
+        new Shop() { ShopId = 2, ShopTypeId = 3 , Name = "Skaal", Location = "Sï¿½nderborg" },
         new Shop() { ShopId = 3, ShopTypeId = 4, Name = "Lagkagehuset", Location = "Aabenraa" },
         new Shop() { ShopId = 4, ShopTypeId = 2, Name = "Ikea", Location = "Odense" },
         new Shop() { ShopId = 5, ShopTypeId = 2, Name = "Jysk", Location = "Esbjerg" }
         );
 ```
+
+## ServiceLayer
+
+Opret interface og impementering af en service i Servicelayer
+
+### `ShopService.cs`
+```C#
+    public class ShopService
+    {
+        private readonly AppDbContext _AppDbContext = default!;
+
+        public ShopService(AppDbContext appDbContext)
+        {
+            appDbContext.Database.EnsureCreated();
+            _AppDbContext = appDbContext;
+        }
+
+        public IQueryable<Shop> GetShops() 
+        {
+            return _AppDbContext.Shops.AsNoTracking();
+        }
+    }
+```
+
+### `IShopService.cs`
+```C#
+    public interface IShopService
+    {
+        public IQueryable<Shop> GetShops();
+    }
+```
+
+## Listview og dependency injection
+
+### Dependency injection
+
+TilfÃ¸j ShopService til dependency injection.
+```C#
+builder.Services.AddScoped<IShopService,ShopService>();
+``` 
+
+### Pages
+
+Opret en mappe inden i pages med navn `Shops`.
+
+Opret fÃ¸lgende side inden i mappen Kaldet `List`
+
+Derefter konfigurerer fÃ¸lgende sider
+
+#### `List.cshtml`
+```html
+<table class="table">
+    @foreach (var shop in Model.Shops)
+    {
+        <tr>
+            <td>@shop.Name</td>
+            <td>@shop.Location</td>
+            <td>@shop.Type.Name</td>
+        </tr>
+    }
+</table>
+```
+
+#### `List.cshtml.cs`
+```C#
+    public class ListModel : PageModel
+    {
+        public IEnumerable<Shop> Shops { get; set; }
+  
+        private readonly IShopService _ShopService = default!;
+    
+        public ListModel(IShopService ShopService)
+        {
+            _ShopService = ShopService;
+        }
+    
+    
+        public void OnGet()
+        {
+            Shops = _ShopService.GetShops().ToList();
+        }
+    }
+```
+## Configuration af Default Route
+
+I stedet for at lande pÃ¥ Index siden og skulle navigere til Shops/List siden, kan man oprette en Custom Default Route Page i `Program.cs`. Det sker ved at tilfÃ¸je en RazorPagesOption til servicen, som vist her:
+```C#
+    builder.Services.AddRazorPages()
+                .AddRazorPagesOptions(options =>
+                {
+                    options.Conventions.AddPageRoute("/Shops/List", "");
+                });
+```
+
+Imidlertid er der en indbygget konvention som siger at siten altid skal begynde med Pages/Index og derfor bliver man nÃ¸dt til at omdÃ¸be Index pagen eller fjerne den.
 

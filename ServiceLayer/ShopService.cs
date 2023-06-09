@@ -26,5 +26,11 @@ public class ShopService : IShopService
                                 .AsNoTracking();
     }
 
+    public Shop? GetShopById(int ShopId)
+    {
+        return _AppDbContext.Shops
+                            .Include(s => s.Type)
+                            .SingleOrDefault(s => s.ShopId == ShopId);
+    }
 
 }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ServiceLayer;
 
-namespace MyApp.Namespace
+namespace WebApp.Pages.Shops
 {
     public class ListModel : PageModel
     {

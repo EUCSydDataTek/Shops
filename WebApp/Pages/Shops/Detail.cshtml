@@ -1,0 +1,30 @@
+﻿@page "{ShopId:int}"
+@model WebApp.Pages.Shops.DetailModel
+@{
+    ViewData["Title"] = "Detail";
+}
+ 
+<h2>@Model.Shop.Name</h2>
+ 
+<dl class="row">
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Shop.ShopId)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.Shop.ShopId)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Shop.Location)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.Shop.Location)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Shop.Type.Name)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.Shop.Type.Name)
+    </dd>
+</dl>
+ 
+<a asp-page="./List" class="btn btn-info">All Shops</a>

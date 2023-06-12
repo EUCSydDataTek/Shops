@@ -1,0 +1,27 @@
+﻿@page "{ShopId:int}"
+@model WebApp.Pages.Shops.EditModel
+
+
+<form action="Post">
+    <div class="form-group">
+        <label asp-for="Shop.Name" />
+        <input  type="text" asp-for="Shop.Name" class="form-control"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Shop.Location" />
+        <input type="text" asp-for="Shop.Location" class="form-control"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Shop.Type" />
+        <select asp-for="Shop.Type"
+                asp-items="Model.Types"
+                class="form-control">
+            <option value="" disabled>Choose ShopType</option>
+        </select>
+    </div>
+
+    <button><i class="fa-solid fa-floppy-disk"></i> Save</button>
+
+</form>

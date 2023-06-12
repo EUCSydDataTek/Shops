@@ -46,4 +46,27 @@ public class ShopService : IShopService
         return ShopModel;
     }
 
+    public Shop Update(Shop updatedShop)
+    {
+        _AppDbContext.Shops.Update(updatedShop);
+            
+        _AppDbContext.SaveChanges();
+
+        return updatedShop;
+    }  
+
+    public Shop Add(Shop newShop)
+    {
+        _AppDbContext.Shops.Add(newShop);
+
+        _AppDbContext.SaveChanges();
+
+        return newShop;
+    }
+
+    public IQueryable<ShopType> GetShopTypes()
+    {
+        return _AppDbContext.ShopTypes.AsNoTracking();
+    }
+
 }

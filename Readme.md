@@ -1,126 +1,128 @@
-# Searching and Paging
-Denne branch viser Search kombineret med Paging.
-> 🔗 Ref: [Simple Paging In ASP.NET Core Razor Pages](https://www.mikesdotnetting.com/article/328/simple-paging-in-asp-net-core-razor-pages)
----
+# 4.CreatingEditingData
+
+Indeholder følgende:
+* Edit og Add af Restaurant
+* SELECT kontrollen til valg af Cuisine
+* Validation, både server og client-side
+* Post-Redirect-Get Pattern
+
+🖼️ Her indsættes billede af Edit-viewet
+
 ## ServiceLayer
-Der oprettes en mappe i roden kaldet __Models__.
 
-Der oprettes en ViewModel i __Models__-folderen:
+RestaurantService udvides med en `Create()`,`Edit()` metode og en `getShopTypes()` metode:
+
+<br>`ShopService.cs`
 ```C#
-    using DataLayer.Entities;
-
-    public class ShopViewModel
+    public Shop Update(Shop updatedShop)
     {
-        public List<Shop> Shops { get; set; } = default!;
-        public int TotalCount { get; set; }
+        _AppDbContext.Shops.Update(updatedShop);
+            
+        _AppDbContext.SaveChanges();
+
+        return updatedShop;
+    }  
+
+    public Shop Add(Shop newShop)
+    {
+        _AppDbContext.Shops.Add(newShop);
+
+        _AppDbContext.SaveChanges();
+
+        return newShop;
+    }
+
+    public IQueryable<ShopType> GetShopTypes()
+    {
+        return _AppDbContext.ShopTypes.AsNoTracking();
     }
 ```
+> 📘 Hvis det er, kan man lave en try/catch der fanger den exception der kommer når du laver en `SaveChanges()`.
+> <br>⚠️ Husk at opdatere Interfacet.
 
-<br>ShopServicen udbygges med denne metode:
-```C#
-    public ShopViewModel GetShopsByName(string searchTerm, int currentPage, int pageSize)
-    {
-        ShopViewModel ShopModel = new();
-        var query = _AppDbContext.Shops.Include(s => s.Type).AsNoTracking();
-        query = searchTerm != null ? query.Where(c => c.Name.ToLower().Contains(searchTerm.ToLower())).OrderBy(r => r.Name) : query;
-
-        ShopModel.TotalCount = query.Count();
-
-        ShopModel.Shops = query.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
-
-        return ShopModel;
-    }
-```
-> ⚠️ Husk at opdatere interfacet
----
 ## WebApp
 
-<br>PageModel i `Shops/List.cshtml.cs` udvides med følgende properties og en Enum:
+Der oprettes en ny page i `Shops` med navnet `Edit`:
+
+`Edit.cshtml.cs`
 ```C#
-    [BindProperty(SupportsGet = true)]
-    public int CurrentPage { get; set; } = 1;
-
-    [BindProperty(SupportsGet = true)]
-    public int PageSize { get; set; } = 10;
-
-    public int Count { get; set; }
-
-    public int TotalPages => (int)Math.Ceiling(decimal.Divide(Count, PageSize));
-
-    public enum PageSizeEnum
+    public class EditModel : PageModel
     {
-        [Display(Name = "2")]
-        _2 = 2,
-        [Display(Name = "4")]
-        _4 = 4,
-        [Display(Name = "10")]
-        _10 = 10,
-    }
-```
+        private readonly IShopService _ShopService;
 
-<br>I `OnGet()` tilføjes følgende:
-```C#
-    public void OnGet()
-    {
-        ShopViewModel ShopModel = _ShopService.GetShopsByName(SearchTerm, CurrentPage, PageSize);
-        Shops = ShopModel.Shops;
-        Count = ShopModel.TotalCount;
-    }
-```
+        public int ShopId { get; set; }
 
-<br> I Razor pagen tilføjes følgende:
-```html
-    <tbody>
-        @foreach (var Shop in Model.Shops)
+        public IEnumerable<SelectListItem> Types { get; set; } = default!;
+
+        [BindProperty]
+        public Shop Shop { get; set; } = default!;
+
+        public EditModel(IShopService shopService)
         {
-            <tr>
-                <td>@Shop.Name</td>
-                <td>@Shop.Location</td>
-                <td>@Shop.Type.Name</td>
-                <td>
-                        <a asp-page="./Detail" asp-route-restaurantId="@Shop.ShopId">
-                            <i class="fas fa-info-circle"></i>
-                        </a>
-                    </td>
-            </tr>
+            _ShopService = shopService;
         }
-    </tbody>
-```
 
-<br> Udskift søgeformen så den understøtter paging:
-```html
-    <form method="get">
-        <div class="input-group mb-3">
-            <input type="search" asp-for="@Model.SearchTerm" class="form-control">
-            <div class="input-group-append">
-                <select asp-for="@Model.PageSize"
-                        asp-items="Html.GetEnumSelectList<WebApp.Pages.Shops.ListModel.PageSizeEnum>()"
-                        class="custom-select">
-                    <option value="">Pagesize</option>
-                </select>
-                <button class="btn btn-outline-secondary" type="submit">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </div>
-    </form>
-```
+        public IActionResult OnGet()
+        {
+            Shop = _ShopService.GetShopById(ShopId);
 
-<br>Placer paging i bunden af siden:
-```C#
-    <div>
-        <ul class="pagination">
-            @for (var i = 1; i <= Model.TotalPages; i++)
+            if(Shop == null)
             {
-                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                    <a asp-page=""
-                    asp-route-currentpage="@i" 
-                    asp-route-searchTerm="@Model.SearchTerm" 
-                    asp-route-pageSize="@Model.PageSize"
-                    class="page-link">@i</a>
-                </li>
+                return RedirectToPage("./NotFound");
             }
-        </ul>
-    </div>
+
+            Types = _ShopService.GetShopTypes()
+                                .Select(t => new SelectListItem(t.Name,t.ShopTypeId.ToString()))
+                                .ToList();
+
+            return Page();
+        }
+
+        public IActionResult OnPost()
+        {
+            try
+            {
+                _ShopService.Update(Shop);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+            return Page();
+        }
+    }
 ```
+
+<br>`Edit.cshtml`
+```html
+@page "{ShopId:int}"
+@model WebApp.Pages.Shops.EditModel
+
+<form action="Post">
+
+    <div class="form-group">
+        <label asp-for="Shop.Name" />
+        <input  type="text" asp-for="Shop.Name" class="form-control"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Shop.Location" />
+        <input type="text" asp-for="Shop.Location" class="form-control"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Shop.Type" />
+        <select asp-for="Shop.Type"
+                asp-items="Model.Types"
+                class="form-control">
+            <option value="" disabled>Choose ShopType</option>
+        </select>
+    </div>
+
+    <button><i class="fa-solid fa-floppy-disk"></i> Save</button>
+
+</form>
+```
+
+
 

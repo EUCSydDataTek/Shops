@@ -6,4 +6,5 @@ public interface IShopService
     public IQueryable<Shop> GetShops();
     public IQueryable<Shop> GetShopsByName(string? name = null);
     public Shop? GetShopById(int ShopId);
+    public ShopViewModel GetShopsByName(string searchTerm, int currentPage, int pageSize);
 }

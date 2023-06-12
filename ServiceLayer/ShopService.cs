@@ -33,4 +33,17 @@ public class ShopService : IShopService
                             .SingleOrDefault(s => s.ShopId == ShopId);
     }
 
+    public ShopViewModel GetShopsByName(string searchTerm, int currentPage, int pageSize)
+    {
+        ShopViewModel ShopModel = new();
+        var query = _AppDbContext.Shops.Include(s => s.Type).AsNoTracking();
+        query = searchTerm != null ? query.Where(c => c.Name.ToLower().Contains(searchTerm.ToLower())).OrderBy(r => r.Name) : query;
+
+        ShopModel.TotalCount = query.Count();
+
+        ShopModel.Shops = query.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+
+        return ShopModel;
+    }
+
 }

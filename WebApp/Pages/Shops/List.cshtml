@@ -3,27 +3,53 @@
 
 <form method="get">
     <div class="input-group mb-3">
-        <input type="search" asp-for="SearchTerm" class="form-control">
+        <input type="search" asp-for="@Model.SearchTerm" class="form-control">
         <div class="input-group-append">
+            <select asp-for="@Model.PageSize"
+                    asp-items="Html.GetEnumSelectList<WebApp.Pages.Shops.ListModel.PageSizeEnum>()"
+                    class="custom-select"
+                    style="display: flex;">
+                <option value="">Pagesize</option>
+            </select>
             <button class="btn btn-outline-secondary" type="submit">
                 <i class="fas fa-search"></i>
             </button>
         </div>
+        
     </div>
 </form>
 
+
+
 <table class="table">
-    @foreach (var shop in Model.Shops)
-    {
-        <tr>
-            <td>@shop.Name</td>
-            <td>@shop.Location</td>
-            <td>@shop.Type.Name</td>
-            <td>
-                <a asp-page="./Detail" asp-route-ShopId="@shop.ShopId">
-                    <i class="fas fa-info-circle"></i>
-                </a>
-            </td>
-        </tr>
-    }
+    <tbody>
+        @foreach (var Shop in Model.Shops)
+        {
+            <tr>
+                <td>@Shop.Name</td>
+                <td>@Shop.Location</td>
+                <td>@Shop.Type.Name</td>
+                <td>
+                        <a asp-page="./Detail" asp-route-restaurantId="@Shop.ShopId">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                    </td>
+            </tr>
+        }
+    </tbody>
 </table>
+
+<div>
+    <ul class="pagination">
+        @for (var i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a asp-page=""
+                   asp-route-currentpage="@i" 
+                   asp-route-searchTerm="@Model.SearchTerm" 
+                   asp-route-pageSize="@Model.PageSize"
+                   class="page-link">@i</a>
+            </li>
+        }
+    </ul>
+</div>

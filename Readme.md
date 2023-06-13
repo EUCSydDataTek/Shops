@@ -196,7 +196,7 @@ dl class="row">
             <td>@shop.Type.Name</td>
             <!--👇 Ny kode 👇-->
             <td>
-                <a asp-page="./Detail" asp-route-restaurantId="@shop.ShopId"> 
+                <a asp-page="./Shops/Detail" asp-route-restaurantId="@shop.ShopId"> 
                     <i class="fas fa-info-circle"></i>                        
                 </a>                                                          
             </td>

@@ -30,7 +30,8 @@ public class ShopService : IShopService
     {
         return _AppDbContext.Shops
                             .Include(s => s.Type)
-                            .SingleOrDefault(s => s.ShopId == ShopId);
+                            .Where(s => s.ShopId == ShopId)
+                            .FirstOrDefault();
     }
 
     public ShopViewModel GetShopsByName(string searchTerm, int currentPage, int pageSize)
@@ -62,6 +63,28 @@ public class ShopService : IShopService
         _AppDbContext.SaveChanges();
 
         return newShop;
+    }
+
+    public bool Delete(int ShopId)
+    {
+        var shop = _AppDbContext.Shops.Where(s => s.ShopId == ShopId).FirstOrDefault();
+
+        if (shop == null)
+        {
+            return false;
+        }
+
+        _AppDbContext.Shops.Remove(shop);
+
+        try
+        {
+            _AppDbContext.SaveChanges();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     public IQueryable<ShopType> GetShopTypes()

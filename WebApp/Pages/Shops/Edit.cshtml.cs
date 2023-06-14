@@ -10,6 +10,7 @@ namespace WebApp.Pages.Shops
     {
         private readonly IShopService _ShopService;
 
+        [BindProperty(SupportsGet = true)]
         public int ShopId { get; set; }
 
         public IEnumerable<SelectListItem> Types { get; set; } = default!;
@@ -48,7 +49,7 @@ namespace WebApp.Pages.Shops
             {
                 return BadRequest();
             }
-            return Page();
+            return RedirectToPage("/Shops/Detail",new { ShopId = Shop.ShopId });
         }
     }
 }

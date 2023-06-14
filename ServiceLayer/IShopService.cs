@@ -9,5 +9,6 @@ public interface IShopService
     public ShopViewModel GetShopsByName(string searchTerm, int currentPage, int pageSize);
     public Shop Update(Shop updatedShop);
     public Shop Add(Shop newShop);
+    public bool Delete(int ShopId);
     public IQueryable<ShopType> GetShopTypes();
 }

@@ -1,19 +1,16 @@
-﻿@page "{ShopId:int}"
-@model WebApp.Pages.Shops.EditModel
-
+﻿@page
+@model WebApp.Pages.Shops.CreateModel
 
 <form method="post">
 
-    <input type="hidden" asp-for="Shop.ShopId" value="@Model.Shop.ShopId">
-
     <div class="form-group">
         <label asp-for="Shop.Name">Name</label>
-        <input  type="text" asp-for="Shop.Name" class="form-control"/>
+        <input type="text" asp-for="Shop.Name" class="form-control" />
     </div>
     <br>
     <div class="form-group">
         <label asp-for="Shop.Location">Location</label>
-        <input type="text" asp-for="Shop.Location" class="form-control"/>
+        <input type="text" asp-for="Shop.Location" class="form-control" />
     </div>
     <br>
     <div class="form-group">
@@ -26,6 +23,6 @@
     </div>
     <br>
 
-    <button class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+    <button class="btn btn-success"><i class="fa-solid fa-plus"></i> Add</button>
 
 </form>

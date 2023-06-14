@@ -1,0 +1,11 @@
+﻿@page
+@model DeleteModel
+
+<h1>Are you Sure?</h1>
+
+<h3>Delete @Model.Shop.Name?</h3>
+
+<div class="alert alert-danger">This action cannot be reverted!</div>
+
+<a class="btn btn-success p-2 w-25" asp-page-handler="DeleteShop" asp-route-ShopId="@Model.Shop.ShopId">Yes</a>
+<a class="btn btn-danger p-2 w-25" asp-page="/Shops/List">No</a>

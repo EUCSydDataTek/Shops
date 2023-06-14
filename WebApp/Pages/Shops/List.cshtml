@@ -7,8 +7,7 @@
         <div class="input-group-append">
             <select asp-for="@Model.PageSize"
                     asp-items="Html.GetEnumSelectList<WebApp.Pages.Shops.ListModel.PageSizeEnum>()"
-                    class="custom-select"
-                    style="display: flex;">
+                    class="custom-select">
                 <option value="">Pagesize</option>
             </select>
             <button class="btn btn-outline-secondary" type="submit">
@@ -30,10 +29,20 @@
                 <td>@Shop.Location</td>
                 <td>@Shop.Type.Name</td>
                 <td>
-                        <a asp-page="./Detail" asp-route-restaurantId="@Shop.ShopId">
+                        <a asp-page="/Shops/Detail" asp-route-ShopId="@Shop.ShopId">
                             <i class="fas fa-info-circle"></i>
                         </a>
-                    </td>
+                </td>
+                <td>
+                    <a asp-page="/Shops/Delete" asp-route-ShopId="@Shop.ShopId">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+                <td>
+                        <a asp-page="/Shops/Edit" asp-route-ShopId="@Shop.ShopId">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                </td>
             </tr>
         }
     </tbody>

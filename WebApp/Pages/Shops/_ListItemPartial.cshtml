@@ -1,0 +1,23 @@
+﻿@model DataLayer.Entities.Shop
+
+<tr>
+    <td>@Model.Name</td>
+    <td>@Model.Location</td>
+    <td>@Model.Type.Name</td>
+    <td>
+        <a asp-page="/Shops/Detail" asp-route-ShopId="@Model.ShopId">
+            <i class="fas fa-info-circle"></i>
+        </a>
+    </td>
+    <td>
+        <a asp-page="/Shops/Delete" asp-route-ShopId="@Model.ShopId">
+            <i class="fas fa-trash"></i>
+        </a>
+    </td>
+    <td>
+        <a asp-page="/Shops/Edit" asp-route-ShopId="@Model.ShopId">
+            <i class="fas fa-edit"></i>
+        </a>
+    </td>
+</tr>
+

@@ -24,26 +24,7 @@
     <tbody>
         @foreach (var Shop in Model.Shops)
         {
-            <tr>
-                <td>@Shop.Name</td>
-                <td>@Shop.Location</td>
-                <td>@Shop.Type.Name</td>
-                <td>
-                        <a asp-page="/Shops/Detail" asp-route-ShopId="@Shop.ShopId">
-                            <i class="fas fa-info-circle"></i>
-                        </a>
-                </td>
-                <td>
-                    <a asp-page="/Shops/Delete" asp-route-ShopId="@Shop.ShopId">
-                        <i class="fas fa-trash"></i>
-                    </a>
-                </td>
-                <td>
-                        <a asp-page="/Shops/Edit" asp-route-ShopId="@Shop.ShopId">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                </td>
-            </tr>
+            <partial name="_ListItemPartial" model="Shop" />
         }
     </tbody>
 </table>

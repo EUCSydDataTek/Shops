@@ -91,5 +91,9 @@ public class ShopService : IShopService
     {
         return _AppDbContext.ShopTypes.AsNoTracking();
     }
-
+    
+    public int GetShopCount()
+    {
+        return _AppDbContext.Shops.Count();
+    }
 }

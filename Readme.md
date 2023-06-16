@@ -1,62 +1,77 @@
 
-# 5.PartialView
+# 6.Viewcomponent
 
-I dette eksempel laver vi et partial view til listen med Shops.
+I dette eksempel laver vi et view component som viser hvor mange shops der er på listen i Footeren på siden.
 
+![ShopCount](/Images/ShopCount.png)
+
+## ServiceLayer
+Lav en metoden `GetShopCount()` som viser hvor mange Shops der er.
+
+`ShopService.cs`
+```C#
+    public int GetShopCount()
+    {
+        return _AppDbContext.Shops.Count();
+    }
+```
+> ⚠️ Husk at opdatere interfacet.
 ## WebApp
 
-lav et razor view med navnet `_ListItemPartial` i mappen `shops`
+I roden af webapp projektet laves en mappe med navn `ViewComponents` inden i den laver du en klasse med navn `ShopCountViewComponent`
 
 <br>
 
-`_ListItemPartial.cshtml`
+`ShopCountComponent.cs`
+```C#
+    public class ShopCountViewComponent : ViewComponent
+    {
+        private readonly IShopService _shopService;
 
-```html
-@model DataLayer.Entities.Shop
-
-<tr>
-    <td>@Model.Name</td>
-    <td>@Model.Location</td>
-    <td>@Model.Type.Name</td>
-    <td>
-        <a asp-page="/Shops/Detail" asp-route-ShopId="@Model.ShopId">
-            <i class="fas fa-info-circle"></i>
-        </a>
-    </td>
-    <td>
-        <a asp-page="/Shops/Delete" asp-route-ShopId="@Model.ShopId">
-            <i class="fas fa-trash"></i>
-        </a>
-    </td>
-    <td>
-        <a asp-page="/Shops/Edit" asp-route-ShopId="@Model.ShopId">
-            <i class="fas fa-edit"></i>
-        </a>
-    </td>
-</tr>
-```
-
-<br>
-
-i `List.cshtml` Fjern derefter koden inden i foreach løkken med det partial vi har lavet.
-
-<br>
-
-`List.cshtml`
-```html
-<table class="table">
-    <tbody>
-        @foreach (var Shop in Model.Shops)
+        public ShopCountViewComponent(IShopService shopService)
         {
-            <partial name="_ListItemPartial" model="Shop" /> <!-- 👈 Partial view reference --> 
+            _shopService = shopService;
         }
-    </tbody>
-</table>
+
+        public IViewComponentResult Invoke()
+        {
+            int count = _shopService.GetShopCount();
+            return View(count);
+        }
+    }
 ```
 
-> 📘 Du kan også referere med razor metoder
-> ```C#
->   @Html.RenderPartial("_ListItemPartial",Shop); // Normal
->   @Html.RenderPartialAsync("_ListItemPartial",Shop); // Async
-> ```
+Der laves nu en mappe i `Shared` med navn `Components` og der oprettes en mappe med navnet `ShopCount`. _altså klassen uden `ViewComponent` til sidst_.
+
+Derefter oprettes Razor View med navnet `Default`
+
+>_Eksempel på mappestruktur_
+>- Pages
+>    - Shared
+>        - ShopCount
+>            - Default.cshtml
+
+<br>
+
+`Default.cshtml`
+```html
+    @model int
+
+    <div id="ShopCount">
+        <h4>There is @Model Shops</h4>
+    </div>
+```
+
+### I `_layout.cshtml`
+
+Counteren tilføjes nu til `Footer` af siden:
+```html
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            @await Component.InvokeAsync("ShopCount")
+        </div>
+    </footer>
+```
+
+
 

@@ -11,4 +11,5 @@ public interface IShopService
     public Shop Add(Shop newShop);
     public bool Delete(int ShopId);
     public IQueryable<ShopType> GetShopTypes();
+    public int GetShopCount();
 }

@@ -24,6 +24,17 @@ namespace WebApp.Pages.Shops
             {
                 return RedirectToPage("./NotFound");
             }
+
+            CookieOptions options = new CookieOptions()
+            {
+                Expires = DateTime.Now.AddMinutes(5),
+                Secure = true,
+                IsEssential = true,
+                SameSite = SameSiteMode.Strict
+            };
+
+            Response.Cookies.Append("PageLastVisit", shopId.ToString(),options);
+
             return Page();
         }
     }

@@ -1,3 +1,4 @@
 {
-    "dotnet.defaultSolution": "Shops.sln"
+    "dotnet.defaultSolution": "Shops.sln",
+    "sarif-viewer.connectToGithubCodeScanning": "off"
 }

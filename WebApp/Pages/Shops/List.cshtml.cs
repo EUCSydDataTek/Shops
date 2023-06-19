@@ -11,6 +11,8 @@ namespace WebApp.Pages.Shops
         [BindProperty(SupportsGet = true)]
         public int CurrentPage { get; set; } = 1;
 
+        public int PageVisited { get; set; } = 0;
+
         [BindProperty(SupportsGet = true)]
         public int PageSize { get; set; } = 10;
 
@@ -42,9 +44,17 @@ namespace WebApp.Pages.Shops
     
         public void OnGet()
         {
-                ShopViewModel ShopModel = _ShopService.GetShopsByName(SearchTerm, CurrentPage, PageSize);
-                Shops = ShopModel.Shops;
-                Count = ShopModel.TotalCount;
+            ShopViewModel ShopModel = _ShopService.GetShopsByName(SearchTerm, CurrentPage, PageSize);
+            Shops = ShopModel.Shops;
+            Count = ShopModel.TotalCount;
+
+            string? VisitorString = string.Empty;
+            Request.Cookies.TryGetValue("PageLastVisit", out VisitorString);
+
+            if (VisitorString != null)
+            {
+                ViewData["PageVisited"] = Convert.ToInt32(VisitorString);
+            }
         }
     }
 }

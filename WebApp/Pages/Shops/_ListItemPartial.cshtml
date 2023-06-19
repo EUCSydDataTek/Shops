@@ -1,6 +1,20 @@
 ﻿@model DataLayer.Entities.Shop
 
-<tr>
+@{
+    string TrClass = "";
+
+    int? ShopId = Convert.ToInt32(ViewData["PageVisited"]);
+
+    if(ShopId != null)
+    {
+        if (ShopId == Model.ShopId)
+        {
+            TrClass = "bg-info";
+        }
+    }
+}
+
+<tr class="@TrClass" >
     <td>@Model.Name</td>
     <td>@Model.Location</td>
     <td>@Model.Type.Name</td>

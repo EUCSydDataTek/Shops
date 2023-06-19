@@ -1,77 +1,61 @@
+# 7. Cookies
 
-# 6.Viewcomponent
+I dette eksempel laver vi en mekanisme som gemmer den sidste du har været inde i details på og makerer den med blå ved hjælp af den bliver gemt i en cookie.
 
-I dette eksempel laver vi et view component som viser hvor mange shops der er på listen i Footeren på siden.
+> ### 🍪 Cookie regler
+> I europa er der regler om der skal være en promt når bliver gemt. det gælder kun tredjeparts cookies men ikke dem der bliver kaldt funktionelle Cookies da de bliver brugt af siden og er vigtige for siden kan fungere.
 
-![ShopCount](/Images/ShopCount.png)
+<br>
 
-## ServiceLayer
-Lav en metoden `GetShopCount()` som viser hvor mange Shops der er.
-
-`ShopService.cs`
-```C#
-    public int GetShopCount()
-    {
-        return _AppDbContext.Shops.Count();
-    }
-```
-> ⚠️ Husk at opdatere interfacet.
 ## WebApp
 
-I roden af webapp projektet laves en mappe med navn `ViewComponents` inden i den laver du en klasse med navn `ShopCountViewComponent`
+### Detail page
 
-<br>
+I detail sidens page behind indættes en noget kode der sætter en cookie med navn `PageLastVisit` til det id som du har besøgt sidst.
 
-`ShopCountComponent.cs`
 ```C#
-    public class ShopCountViewComponent : ViewComponent
+    Response.Cookies.Append("PageLastVisit", shopId.ToString());
+```
+
+### List Page
+
+I page behind indsæt denne property:
+```C#
+public int PageVisited { get; set; } = 0;
+```
+
+insæt denne kode i `OnGet()`:
+```C#
+string? VisitorString = string.Empty;
+Request.Cookies.TryGetValue("", out VisitorString);
+
+if (VisitorString != null)
+{
+    x Visited = Convert.ToInt32(VisitorString);
+}
+```
+
+## _ListItemPartial
+
+før `<tr>` noget der higliter den på siden og ret den første `<tr>`
+
+```html
+@model DataLayer.Entities.Shop
+
+@{
+    string TrClass = "";
+
+    int? ShopId = Convert.ToInt32(ViewData["PageVisited"]);
+
+    if(ShopId != null)
     {
-        private readonly IShopService _shopService;
-
-        public ShopCountViewComponent(IShopService shopService)
+        if (ShopId == Model.ShopId)
         {
-            _shopService = shopService;
-        }
-
-        public IViewComponentResult Invoke()
-        {
-            int count = _shopService.GetShopCount();
-            return View(count);
+            TrClass = "bg-info";
         }
     }
+}
+
+<tr class="@TrClass" >
+    ...
 ```
-
-Der laves nu en mappe i `Shared` med navn `Components` og der oprettes en mappe med navnet `ShopCount`. _altså klassen uden `ViewComponent` til sidst_.
-
-Derefter oprettes Razor View med navnet `Default`
-
->_Eksempel på mappestruktur_
->- Pages
->    - Shared
->        - ShopCount
->            - Default.cshtml
-
-<br>
-
-`Default.cshtml`
-```html
-    @model int
-
-    <div id="ShopCount">
-        <h4>There is @Model Shops</h4>
-    </div>
-```
-
-### I `_layout.cshtml`
-
-Counteren tilføjes nu til `Footer` af siden:
-```html
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            @await Component.InvokeAsync("ShopCount")
-        </div>
-    </footer>
-```
-
-
-

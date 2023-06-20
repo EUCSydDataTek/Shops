@@ -1,61 +1,41 @@
-# 7. Cookies
+# 8. Sessions
 
-I dette eksempel laver vi en mekanisme som gemmer den sidste du har været inde i details på og makerer den med blå ved hjælp af den bliver gemt i en cookie.
+I denne demo skifter vi cookies ud med en session variabel.
 
-> ### 🍪 Cookie regler
-> I europa er der regler om der skal være en promt når bliver gemt. det gælder kun tredjeparts cookies men ikke dem der bliver kaldt funktionelle Cookies da de bliver brugt af siden og er vigtige for siden kan fungere.
+## Webapp
 
-<br>
+### `Program.cs`
+Indsæt disse ting i middleware og services
 
-## WebApp
-
-### Detail page
-
-I detail sidens page behind indættes en noget kode der sætter en cookie med navn `PageLastVisit` til det id som du har besøgt sidst.
-
+#### Services
 ```C#
-    Response.Cookies.Append("PageLastVisit", shopId.ToString());
-```
+builder.Services.AddDistributedMemoryCache();
 
-### List Page
-
-I page behind indsæt denne property:
-```C#
-public int PageVisited { get; set; } = 0;
-```
-
-insæt denne kode i `OnGet()`:
-```C#
-string? VisitorString = string.Empty;
-Request.Cookies.TryGetValue("", out VisitorString);
-
-if (VisitorString != null)
+builder.Services.AddSession(options =>
 {
-    x Visited = Convert.ToInt32(VisitorString);
-}
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 ```
 
-## _ListItemPartial
+#### Middleware
+```C#
+app.UseSession();
+```
 
-før `<tr>` noget der higliter den på siden og ret den første `<tr>`
+## `Detail.cshtml.cs`
+Udskift cookie funktionerne med sessions:
+```C#
+HttpContext.Session.SetInt32("PageLastVisit", shopId);
+```
 
-```html
-@model DataLayer.Entities.Shop
+## `List.cshtml.cs`
+```C#
+int? shopId = HttpContext.Session.GetInt32("PageLastVisit");
 
-@{
-    string TrClass = "";
-
-    int? ShopId = Convert.ToInt32(ViewData["PageVisited"]);
-
-    if(ShopId != null)
-    {
-        if (ShopId == Model.ShopId)
-        {
-            TrClass = "bg-info";
-        }
-    }
+if (shopId != null)
+{
+    ViewData["PageVisited"] = shopId;
 }
-
-<tr class="@TrClass" >
-    ...
 ```

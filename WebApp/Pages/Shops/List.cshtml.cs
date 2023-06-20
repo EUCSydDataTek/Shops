@@ -48,12 +48,11 @@ namespace WebApp.Pages.Shops
             Shops = ShopModel.Shops;
             Count = ShopModel.TotalCount;
 
-            string? VisitorString = string.Empty;
-            Request.Cookies.TryGetValue("PageLastVisit", out VisitorString);
+            int? shopId = HttpContext.Session.GetInt32("PageLastVisit");
 
-            if (VisitorString != null)
+            if (shopId != null)
             {
-                ViewData["PageVisited"] = Convert.ToInt32(VisitorString);
+                ViewData["PageVisited"] = shopId;
             }
         }
     }

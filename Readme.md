@@ -1,41 +1,8 @@
-# 8. Sessions
+# 9. Deployment
 
-I denne demo skifter vi cookies ud med en session variabel.
+I denne demo vil vi lave et docker image og uploade den til docker hub eller et andet registry.
 
-## Webapp
+# WebApp
 
-### `Program.cs`
-Indsæt disse ting i middleware og services
+I solution explorer højreklik på webapp projektet og 
 
-#### Services
-```C#
-builder.Services.AddDistributedMemoryCache();
-
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-```
-
-#### Middleware
-```C#
-app.UseSession();
-```
-
-## `Detail.cshtml.cs`
-Udskift cookie funktionerne med sessions:
-```C#
-HttpContext.Session.SetInt32("PageLastVisit", shopId);
-```
-
-## `List.cshtml.cs`
-```C#
-int? shopId = HttpContext.Session.GetInt32("PageLastVisit");
-
-if (shopId != null)
-{
-    ViewData["PageVisited"] = shopId;
-}
-```

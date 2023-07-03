@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer;
+using WebApi.Mappers;
 using WebApi.Models;
 
 namespace WebApi.Controllers
@@ -18,16 +19,19 @@ namespace WebApi.Controllers
             _shopService = shopService;
         }
 
-        public List<ShopModel> GetShops()
+        [HttpGet]
+        [HttpHead]
+        public List<ShopModel> GetShops([FromQuery] SearchQueryModel searchQuery)
         {
-            return _shopService.GetShops().Select(s => new ShopModel()
-            {
-                Name = s.Name,
-                Location = s.Location,
-                ShopId = s.ShopId,
-                ShopType = s.Type.Name,
-                ShopTypeId = s.ShopTypeId
-            }).ToList();
+
+            var model = _shopService.GetShopsByName(searchQuery.query,searchQuery.page,searchQuery.pageSize);
+
+            // Metadata i headeren
+            Response.Headers.Add("Page", searchQuery.page.ToString());
+            Response.Headers.Add("PageSize", searchQuery.pageSize.ToString());
+            Response.Headers.Add("TotalCount", model.TotalCount.ToString());
+
+            return model.Shops.MapToModel().ToList();
         }
 
     }

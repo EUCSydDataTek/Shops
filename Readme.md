@@ -1,4 +1,4 @@
-# 2. GET
+# 2. Simple GET
 
 I dette eksempel skal vi hente data fra Apien.
 
@@ -113,3 +113,5 @@ public class ShopsController : ControllerBase
 Start Apien og test mmed føgende adresser:
 - `/api/shop?ShopId=5`
 - `/api/shops`
+
+> ℹ️ Prøv gerne med et andet shopId

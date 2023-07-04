@@ -1,91 +1,79 @@
-# 2b. Advanced GET
+# 3. POST
 
-I denne demo er projektet udvidet til at du nu kan lave fristekst søgning samt udføre mere komplekse søgninger.
+I dette eksempel skal vi implementere så man kan oprette en shop.
 
-> ℹ️ Vi bruger stadig de søgefunktioner der er lavet i servicelayer da det bliver mere simpelt og så er der en rød tråd.
+## Oprettelse af model
 
-# Opret en mapper
+I mappen `Models` oprettes en klasse med navn `ShopCreateModel`
 
-For at gøre koden  mere læselig og undgå kode der går igen skal der laves en Mapper der mapper fra Shop til ShopModel.
+`ShopCreateModel`:
+```C#
+public class ShopCreateModel
+{
+    public string Name { get; set; }
 
-Der oprettes en mappe der hedder `Mappers` hvor der oprettes en klasse med navn `ShopMapper`
+    public string Location { get; set; }
+
+    public int ShopTypeId { get; set; }
+}
+```
+
+> ℹ️ Vi bruger en model fordi vi ikke vil have at brugeren kan redigere i `ShopId` eller andet som ikke skal udføres under en oprettelse.
+
+## ShopMapper
+
+I `ShopMapper` klassen tilføjes en ny metode til at konvertere til et `Shop` objekt .
 
 `ShopMapper`:
 ```C#
- public static class ShopMapper
- {
-
-     public static IEnumerable<ShopModel> MapToModel(this IEnumerable<Shop> shopModels)
-     {
-         return shopModels.Select(s => new ShopModel()
-         {
-             Name = s.Name,
-             Location = s.Location,
-             ShopId = s.ShopId,
-             ShopType = s.Type.Name,
-             ShopTypeId = s.ShopTypeId
-         }).ToList();
-     }
-
-     public static ShopModel MapToModel(this Shop shop)
-     {
-         return new ShopModel()
-         {
-             Name = shop.Name,
-             Location = shop.Location,
-             ShopId = shop.ShopId,
-             ShopType = shop.Type.Name,
-             ShopTypeId = shop.ShopTypeId
-         };
-     }
-
- }
-```
-
-> ℹ️ Vi kommer til konvertering den anden vej senere.
-
-
-# Opret en SearchModel
-
-I `Models` opret en klasse kaldet `SearchQueryModel`
-
-`SearchQueryModel`:
-```C#
-public class SearchQueryModel
+public static Shop MapToShop(this ShopCreateModel model)
 {
-    public string query { get; set; } = string.Empty;
-
-    public int page { get; set; }
-
-    public int pageSize { get; set; }
+    return new Shop()
+    {
+        Name = model.Name,
+        Location = model.Location,
+        ShopTypeId = model.ShopTypeId,
+    };
 }
 ```
 
-## ShopsController
+> ℹ️ Man kunne ligså godt have brugt AutoMapper her.
+> Men fordi projektet er i denne størrelse kan vi godt gøre det manuelt.
 
-Opdater ShopsControllerens `GetShops()` metode:
+## Oprettelse af POST metode i Controller
+
+I `ShopController` rettes `HttpGet` på `GetShop` så den ser sådan ud:
 ```C#
-[HttpGet]
-[HttpHead]
-public List<ShopModel> GetShops([FromQuery] SearchQueryModel searchQuery)
+[HttpGet(Name = "GetShop")] 
+public IActionResult GetShop(int shopId)
 {
-    var model = _shopService.GetShopsByName(searchQuery.query,searchQuery.page,searchQuery.pageSize);
-
-    // Metadata i headeren
-    Response.Headers.Add("Page", searchQuery.page.ToString());
-    Response.Headers.Add("PageSize", searchQuery.pageSize.ToString());
-    Response.Headers.Add("TotalCount", model.TotalCount.ToString());
-
-    return model.Shops.MapToModel().ToList();
+    ...
 }
 ```
-> ℹ️ `HttpHead` gør at du kan requeste med en `HEAD` i stedet for en get.
-> - En `HEAD` metode kører koden men returnerer kun Headeren på svaret.
-> - God til hvis du kun vil tjække at der er kommet mere data eller et objekt er blevet ændret.
 
-# Test
-Test med følgende queries:
+> ℹ️ Navnet vi giver i name er en form for pointer til denne metode så vi både kan bruge den til redirects eller til brug i en `CreatedAtAction` metode.
 
-- `/api/shops?query=pow`
-- `/api/shops?page=1&pagesize=1`
-- `/api/shops?query=kage&page=1&pagesize=1`
+<br>
+
+`ShopController`:
+```C#
+[HttpPost]
+[Route("create")]
+public IActionResult Create(ShopCreateModel model)
+{
+    var NewShop = model.MapToShop();
+
+    try
+    {
+        _shopService.Add(NewShop);
+        return CreatedAtAction("GetShop",new { shopId = NewShop.ShopId },NewShop.MapToModel());
+    }
+    catch (Exception e)
+    {
+        return UnprocessableEntity(e.Message);
+    }
+}
+```
+
+> ℹ️ `[Route]` bruges til at sige at vi gerne vil have at den har sin egen route.
+> i dette tilfælde er det `/api/shop/create`

@@ -15,7 +15,7 @@ namespace WebApi.Mappers
                 Name = s.Name,
                 Location = s.Location,
                 ShopId = s.ShopId,
-                ShopType = s.Type.Name,
+                ShopType = s.Type?.Name ?? "",
                 ShopTypeId = s.ShopTypeId
             }).ToList();
         }
@@ -27,10 +27,19 @@ namespace WebApi.Mappers
                 Name = shop.Name,
                 Location = shop.Location,
                 ShopId = shop.ShopId,
-                ShopType = shop.Type.Name,
+                ShopType = shop.Type?.Name ?? "",
                 ShopTypeId = shop.ShopTypeId
             };
         }
 
+        public static Shop MapToShop(this ShopCreateModel model)
+        {
+            return new Shop()
+            {
+                Name = model.Name,
+                Location = model.Location,
+                ShopTypeId = model.ShopTypeId,
+            };
+        }
     }
 }

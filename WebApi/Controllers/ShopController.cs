@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using ServiceLayer;
+using WebApi.Mappers;
 using WebApi.Models;
 
 namespace WebApi.Controllers
@@ -18,7 +19,7 @@ namespace WebApi.Controllers
             _shopService = shopService;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetShop")]
         public IActionResult GetShop(int shopId)
         {
 
@@ -35,10 +36,27 @@ namespace WebApi.Controllers
                 };
 
                 return Ok(model);
-            } 
+            }
             else
             {
                 return NotFound();
+            }
+        }
+
+        [HttpPost]
+        [Route("create")]
+        public IActionResult Create(ShopCreateModel model)
+        {
+            var NewShop = model.MapToShop();
+
+            try
+            {
+                _shopService.Add(NewShop);
+                return CreatedAtAction("GetShop",new { shopId = NewShop.ShopId },NewShop.MapToModel());
+            }
+            catch (Exception e)
+            {
+                return UnprocessableEntity(e.Message);
             }
         }
     }

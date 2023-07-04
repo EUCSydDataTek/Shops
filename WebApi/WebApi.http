@@ -1,0 +1,15 @@
+﻿@WebApi_HostAddress = https://localhost:7289
+
+POST {{WebApi_HostAddress}}/api/shop/create
+Content-Type: application/json
+
+{
+  "Name": "Cafe Gallardo",
+  "Location": "Esbjerg",
+  "ShopTypeId": 3
+}
+
+###
+
+GET {{WebApi_HostAddress}}/api/shops?pageSize=100
+

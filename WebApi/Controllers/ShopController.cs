@@ -52,13 +52,31 @@ namespace WebApi.Controllers
             try
             {
                 _shopService.Add(NewShop);
-                return CreatedAtAction("GetShop",new { shopId = NewShop.ShopId },NewShop.MapToModel());
+                return CreatedAtAction("GetShop", new { shopId = NewShop.ShopId }, NewShop.MapToModel());
             }
             catch (Exception e)
             {
                 return UnprocessableEntity(e.Message);
             }
         }
+
+        [HttpPut]
+        [Route("edit")]
+        public IActionResult Edit(ShopEditModel model) 
+        {
+            var shop = model.MaptoShop();
+
+            try
+            {
+                _shopService.Update(shop);
+                return CreatedAtAction("GetShop", new { shopId = shop.ShopId }, shop.MapToModel());
+            }
+            catch (Exception e)
+            {
+                return UnprocessableEntity(e.Message);
+            }       
+        }
+
     }
 }
 

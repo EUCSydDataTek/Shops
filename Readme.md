@@ -1,79 +1,79 @@
-# 3. POST
+# 5. PUT
 
-I dette eksempel skal vi implementere så man kan oprette en shop.
+I dette eksempel skal vi gøre så vi kan redigere vores shops ved hjælp af `PUT` metoden.
 
 ## Oprettelse af model
 
-I mappen `Models` oprettes en klasse med navn `ShopCreateModel`
+Der oprettes en model der hedder `ShopEditModel` som bruges som en form for editform
 
-`ShopCreateModel`:
+`ShopEditModel`:
+
 ```C#
-public class ShopCreateModel
+public class ShopEditModel
 {
-    public string Name { get; set; }
+    public int ShopId { get; set; }
 
-    public string Location { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     public int ShopTypeId { get; set; }
+
+    public string Location { get; set; } = string.Empty;
 }
 ```
 
-> ℹ️ Vi bruger en model fordi vi ikke vil have at brugeren kan redigere i `ShopId` eller andet som ikke skal udføres under en oprettelse.
+## Mapping
 
-## ShopMapper
-
-I `ShopMapper` klassen tilføjes en ny metode til at konvertere til et `Shop` objekt .
+`ShopMapper` udvides så man kan konvertere en `ShopEditModel` til et `Shop` objekt.
 
 `ShopMapper`:
 ```C#
-public static Shop MapToShop(this ShopCreateModel model)
+public static Shop MaptoShop(this ShopEditModel model)
 {
     return new Shop()
     {
         Name = model.Name,
         Location = model.Location,
         ShopTypeId = model.ShopTypeId,
+        ShopId = model.ShopId,
     };
 }
 ```
 
-> ℹ️ Man kunne ligså godt have brugt AutoMapper her.
-> Men fordi projektet er i denne størrelse kan vi godt gøre det manuelt.
+## Controller
 
-## Oprettelse af POST metode i Controller
-
-I `ShopController` rettes `HttpGet` på `GetShop` så den ser sådan ud:
+Udvid `Shopcontroller` med en ny metode:
 ```C#
-[HttpGet(Name = "GetShop")] 
-public IActionResult GetShop(int shopId)
+[HttpPut]
+[Route("edit")]
+public IActionResult Edit(ShopEditModel model) 
 {
-    ...
-}
-```
-
-> ℹ️ Navnet vi giver i name er en form for pointer til denne metode så vi både kan bruge den til redirects eller til brug i en `CreatedAtAction` metode.
-
-<br>
-
-`ShopController`:
-```C#
-[HttpPost]
-[Route("create")]
-public IActionResult Create(ShopCreateModel model)
-{
-    var NewShop = model.MapToShop();
+    var shop = model.MaptoShop();
 
     try
     {
-        _shopService.Add(NewShop);
-        return CreatedAtAction("GetShop",new { shopId = NewShop.ShopId },NewShop.MapToModel());
+        _shopService.Update(shop);
+        return CreatedAtAction("EditShop", new { shopId = shop.ShopId }, shop.MapToModel());
     }
     catch (Exception e)
     {
         return UnprocessableEntity(e.Message);
-    }
+    }       
 }
 ```
 
-> ℹ️ `[Route]` bruges til at sige at vi gerne vil have at den har sin egen route.
-> i dette tilfælde er det `/api/shop/create`
+## Test
+
+Tilføj til `.http` filen:
+```http
+PUT {{WebApi_HostAddress}}/api/shop/edit
+Content-Type: application/json
+
+{
+  "ShopId":1,
+  "Name":"Poer",
+  "ShopTypeId":3,
+  "Location":"Nowhere"
+}
+
+###
+```

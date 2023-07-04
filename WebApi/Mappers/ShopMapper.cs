@@ -41,5 +41,16 @@ namespace WebApi.Mappers
                 ShopTypeId = model.ShopTypeId,
             };
         }
+
+        public static Shop MaptoShop(this ShopEditModel model)
+        {
+            return new Shop()
+            {
+                Name = model.Name,
+                Location = model.Location,
+                ShopTypeId = model.ShopTypeId,
+                ShopId = model.ShopId,
+            };
+        }
     }
 }

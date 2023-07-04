@@ -13,3 +13,16 @@ Content-Type: application/json
 
 GET {{WebApi_HostAddress}}/api/shops?pageSize=100
 
+###
+
+PUT {{WebApi_HostAddress}}/api/shop/edit
+Content-Type: application/json
+
+{
+  "ShopId":1,
+  "Name":"Poer",
+  "ShopTypeId":3,
+  "Location":"Nowhere"
+}
+
+###

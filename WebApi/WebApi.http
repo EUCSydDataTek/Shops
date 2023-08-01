@@ -26,3 +26,24 @@ Content-Type: application/json
 }
 
 ###
+
+PATCH {{WebApi_HostAddress}}/api/shop?shopId=3
+Content-Type: application/json-patch+json
+
+[
+    {
+        "op": "replace",
+        "path": "/Location",
+        "value": "Poer"
+    },
+    {
+        "op": "replace",
+        "path": "/ShopTypeId",
+        "value": 1
+    },
+    {
+        "op": "replace",
+        "path": "/Name",
+        "value": "Steak n more"
+    }
+]

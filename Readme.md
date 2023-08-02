@@ -71,6 +71,33 @@ I `Newtonsoft.json` har vi et objekt der hedder `JsonPatchDocument` som er en ko
     }
 ```
 
+## Test
+
+Test med at tilføje dette til .http filen:
+
+```.http
+PATCH {{WebApi_HostAddress}}/api/shop?shopId=3
+Content-Type: application/json-patch+json
+
+[
+    {
+        "op": "copy",
+        "from": "/Name",
+        "path": "/Location",
+    },
+    {
+        "op": "replace",
+        "path": "/ShopTypeId",
+        "value": 1
+    },
+    {
+        "op": "replace",
+        "path": "/Name",
+        "value": "Steak n more"
+    }
+]
+```
+
 ## Extra
 
 ### Debugger til patch documenter
@@ -106,10 +133,10 @@ I `Newtonsoft.json` har vi et objekt der hedder `JsonPatchDocument` som er en ko
                     break;
                 case Microsoft.AspNetCore.JsonPatch.Operations.OperationType.Invalid:
                     break;
-                }
-
-                _Logger.LogInformation( sb.ToString() );
-
             }
+
+            _Logger.LogInformation( sb.ToString() );
+
         }
+    }
 ```

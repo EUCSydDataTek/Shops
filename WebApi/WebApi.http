@@ -32,9 +32,9 @@ Content-Type: application/json-patch+json
 
 [
     {
-        "op": "replace",
+        "op": "copy",
+        "from": "/Name",
         "path": "/Location",
-        "value": "Poer"
     },
     {
         "op": "replace",
@@ -44,6 +44,6 @@ Content-Type: application/json-patch+json
     {
         "op": "replace",
         "path": "/Name",
-        "value": "Steak n more"
+        "value": "Steak n mor"
     }
 ]

@@ -117,6 +117,35 @@ namespace WebApi.Controllers
             return CreatedAtAction("GetShop", new { shopId = model.ShopId },model);
         }
 
+        [HttpDelete]
+        [Route("remove")]
+        public IActionResult Remove(int Shopid)
+        {
+            var shop = _shopService.GetShopById(Shopid);
+
+            if (shop == null)
+                return NotFound();
+
+            try
+            {
+                bool result = _shopService.Delete(Shopid);
+
+                if (result)
+                {
+                    return NoContent(); // Success
+                }
+                else
+                {
+                    return UnprocessableEntity(); // fejl under delete
+                }
+            }
+            catch (Exception e)
+            {
+                _Logger.LogError(e.Message);
+                return UnprocessableEntity(e.Message);
+            }
+        }
+
         private void LogPatchDoc<T>(JsonPatchDocument<T> document) where T : class
         {
             StringBuilder sb = new StringBuilder();

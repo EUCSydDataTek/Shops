@@ -47,3 +47,7 @@ Content-Type: application/json-patch+json
         "value": "Steak n mor"
     }
 ]
+
+###
+
+DELETE {{WebApi_HostAddress}}/api/shop/remove?Shopid=2

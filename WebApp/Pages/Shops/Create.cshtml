@@ -3,7 +3,7 @@
 
 <div asp-validation-summary="All" ></div>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data" >
 
     <div class="form-group">
         <label asp-for="Shop.Name">Name</label>
@@ -25,6 +25,12 @@
             <option value="" disabled>Choose ShopType</option>
         </select>
         <span class="text-danger" asp-validation-for="Shop.ShopTypeId"></span>
+    </div>
+    <br>
+
+    <div class="form-group">
+        <label asp-for="Shop.Image">Type</label>
+        <input type="file" asp-for="Shop.Image" />
     </div>
     <br>
 

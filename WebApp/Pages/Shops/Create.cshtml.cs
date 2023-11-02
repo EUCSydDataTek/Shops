@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceLayer;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 
 namespace WebApp.Pages.Shops
 {
@@ -30,13 +31,38 @@ namespace WebApp.Pages.Shops
 
         public IActionResult OnPost()
         {
+            
+
+            if (Shop?.Image != null)
+            {
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    string Fullpath = Path.Combine("wwwroot","Images", Shop.Image.FileName);
+
+                    Shop.Image.CopyTo(stream);
+
+                    if (stream.Length <= 4000000)
+                    {
+                        System.IO.File.WriteAllBytes(Fullpath, stream.ToArray());
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(nameof(Shop.Image), "Filen skal være max. 4Mb.");
+                    }
+                    
+                }
+            }
+
             if (ModelState.IsValid)
             {
+                
+
                 var newShop = _ShopService.Add(new Shop()
                 {
                     Name = Shop.Name,
                     Location = Shop.Location,
                     ShopTypeId = Shop.ShopTypeId,
+                    ShopImagePath = $"""/Images/{Shop.Image.FileName}"""
                 });
 
                 return RedirectToPage("/Shops/Detail", new { ShopId = newShop.ShopId });
@@ -60,6 +86,8 @@ namespace WebApp.Pages.Shops
             [Required(ErrorMessage = "* Location skal udfyldes.")]
             [MaxLength(50,ErrorMessage = "Location skal maximum være 50 karakterer lang")]
             public string Location { get; set; } = string.Empty;
+
+            public IFormFile Image { get; set; } = default!;
 
         }
     }

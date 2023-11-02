@@ -5,7 +5,9 @@
 }
  
 <h2>@Model.Shop.Name</h2>
- 
+
+<img src="@Model.Shop.ShopImagePath" alt="@Model.Shop.Name" />
+
 <dl class="row">
     <dt class="col-sm-2">
         @Html.DisplayNameFor(model => model.Shop.ShopId)

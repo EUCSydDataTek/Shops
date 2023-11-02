@@ -12,6 +12,8 @@ namespace DataLayer.Entities
 
         public string Name { get; set; } = string.Empty;
 
+        public string ShopImagePath { get; set; } = "https://picsum.photos/200";
+
         public int ShopTypeId { get; set; }
 
         public string Location { get; set; } = string.Empty;

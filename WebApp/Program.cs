@@ -5,7 +5,7 @@ using ServiceLayer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMemoryDb"));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer("Server=localhost;Database=ShopsDB;User Id=SA;Password=P@ssw0rd;TrustServerCertificate=True")); //.UseInMemoryDatabase("InMemoryDb"));
 builder.Services.AddScoped<IShopService,ShopService>();
 
 // Add services to the container.

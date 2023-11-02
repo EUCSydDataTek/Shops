@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,10 @@ namespace DataLayer.Entities
 
         public string Name { get; set; } = string.Empty;
 
-        public string ShopImagePath { get; set; } = "https://picsum.photos/200";
+        public string ImageMimeType { get; set; } = string.Empty;
+
+        [Column(TypeName = "VARBINARY(MAX)")]
+        public byte[] ImageData { get; set; } = new byte[0];
 
         public int ShopTypeId { get; set; }
 

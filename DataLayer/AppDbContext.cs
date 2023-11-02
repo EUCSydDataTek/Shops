@@ -31,12 +31,14 @@ namespace DataLayer
                     new ShopType { ShopTypeId = 4, Name = "Bakery"}
                 );
 
+            byte[] Image = File.ReadAllBytes(Path.Combine("wwwroot", "Images", "image.png"));
+
             modelBuilder.Entity<Shop>().HasData(
-                    new Shop() { ShopId = 1, ShopTypeId = 1 , Name = "Power", Location = "Odense" },
-                    new Shop() { ShopId = 2, ShopTypeId = 3 , Name = "Skaal", Location = "Sønderborg" },
-                    new Shop() { ShopId = 3, ShopTypeId = 4, Name = "Lagkagehuset", Location = "Aabenraa" },
-                    new Shop() { ShopId = 4, ShopTypeId = 2, Name = "Ikea", Location = "Odense" },
-                    new Shop() { ShopId = 5, ShopTypeId = 2, Name = "Jysk", Location = "Esbjerg" }
+                    new Shop() { ShopId = 1, ShopTypeId = 1 , Name = "Power", Location = "Odense", ImageData = Image, ImageMimeType = "image/png"},
+                    new Shop() { ShopId = 2, ShopTypeId = 3 , Name = "Skaal", Location = "Sønderborg",ImageData = Image, ImageMimeType = "image/png" },
+                    new Shop() { ShopId = 3, ShopTypeId = 4, Name = "Lagkagehuset", Location = "Aabenraa",ImageData = Image, ImageMimeType = "image/png" },
+                    new Shop() { ShopId = 4, ShopTypeId = 2, Name = "Ikea", Location = "Odense", ImageData = Image, ImageMimeType = "image/png" },
+                    new Shop() { ShopId = 5, ShopTypeId = 2, Name = "Jysk", Location = "Esbjerg", ImageData = Image, ImageMimeType = "image/png" }
                 );
 
         }

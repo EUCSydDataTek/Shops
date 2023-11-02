@@ -6,7 +6,7 @@
  
 <h2>@Model.Shop.Name</h2>
 
-<img src="@Model.Shop.ShopImagePath" alt="@Model.Shop.Name" />
+<img src="@Model.Shop.ImageData.GetBase64Image(Model.Shop.ImageMimeType)" alt="@Model.Shop.Name" />
 
 <dl class="row">
     <dt class="col-sm-2">

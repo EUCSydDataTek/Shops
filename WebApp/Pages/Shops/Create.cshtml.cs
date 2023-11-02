@@ -31,19 +31,22 @@ namespace WebApp.Pages.Shops
 
         public IActionResult OnPost()
         {
-            
+
+            byte[] ImageData = default!;
 
             if (Shop?.Image != null)
             {
+
                 using (MemoryStream stream = new MemoryStream())
                 {
+                    
                     string Fullpath = Path.Combine("wwwroot","Images", Shop.Image.FileName);
 
                     Shop.Image.CopyTo(stream);
 
                     if (stream.Length <= 4000000)
                     {
-                        System.IO.File.WriteAllBytes(Fullpath, stream.ToArray());
+                        ImageData = stream.ToArray();
                     }
                     else
                     {
@@ -62,7 +65,8 @@ namespace WebApp.Pages.Shops
                     Name = Shop.Name,
                     Location = Shop.Location,
                     ShopTypeId = Shop.ShopTypeId,
-                    ShopImagePath = $"""/Images/{Shop.Image.FileName}"""
+                    ImageMimeType = Shop.Image.ContentType,
+                    ImageData = ImageData
                 });
 
                 return RedirectToPage("/Shops/Detail", new { ShopId = newShop.ShopId });

@@ -1,20 +1,20 @@
 ﻿@page
 @model WebApp.Pages.Shops.CreateModel
 
-
+<div asp-validation-summary="All" ></div>
 
 <form method="post">
 
     <div class="form-group">
         <label asp-for="Shop.Name">Name</label>
         <input type="text" asp-for="Shop.Name" class="form-control" />
-        <span asp-validation-for="Shop.Name"></span>
+        <span class="text-danger" asp-validation-for="Shop.Name"></span>
     </div>
     <br>
     <div class="form-group">
         <label asp-for="Shop.Location">Location</label>
         <input type="text" asp-for="Shop.Location" class="form-control" />
-        <span asp-validation-for="Shop.Location"></span>
+        <span class="text-danger" asp-validation-for="Shop.Location"></span>
     </div>
     <br>
     <div class="form-group">
@@ -24,10 +24,17 @@
                 class="form-control">
             <option value="" disabled>Choose ShopType</option>
         </select>
-        <span asp-validation-for="Shop.ShopTypeId"></span>
+        <span class="text-danger" asp-validation-for="Shop.ShopTypeId"></span>
     </div>
     <br>
 
     <button class="btn btn-success"><i class="fa-solid fa-plus"></i> Add</button>
 
 </form>
+
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

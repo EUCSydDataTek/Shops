@@ -50,15 +50,15 @@ namespace WebApp.Pages.Shops
         public class AddShopModel 
         {
 
-            [Required]
+            [Required(ErrorMessage = "* Name skal udfyldes.")]
             [StringLength(100)]
             public string Name { get; set; } = string.Empty;
 
-            [Required]
+            [Required(ErrorMessage = "* ShopType skal udfyldes.")]
             public int ShopTypeId { get; set; }
 
-            [Required]
-            [StringLength(50)]
+            [Required(ErrorMessage = "* Location skal udfyldes.")]
+            [MaxLength(50,ErrorMessage = "Location skal maximum være 50 karakterer lang")]
             public string Location { get; set; } = string.Empty;
 
         }

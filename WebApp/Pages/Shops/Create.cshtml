@@ -1,25 +1,30 @@
 ﻿@page
 @model WebApp.Pages.Shops.CreateModel
 
+
+
 <form method="post">
 
     <div class="form-group">
         <label asp-for="Shop.Name">Name</label>
         <input type="text" asp-for="Shop.Name" class="form-control" />
+        <span asp-validation-for="Shop.Name"></span>
     </div>
     <br>
     <div class="form-group">
         <label asp-for="Shop.Location">Location</label>
         <input type="text" asp-for="Shop.Location" class="form-control" />
+        <span asp-validation-for="Shop.Location"></span>
     </div>
     <br>
     <div class="form-group">
-        <label asp-for="Shop.Type.ShopTypeId">Type</label>
+        <label asp-for="Shop.ShopTypeId">Type</label>
         <select asp-for="Shop.ShopTypeId"
                 asp-items="Model.Types"
                 class="form-control">
             <option value="" disabled>Choose ShopType</option>
         </select>
+        <span asp-validation-for="Shop.ShopTypeId"></span>
     </div>
     <br>
 

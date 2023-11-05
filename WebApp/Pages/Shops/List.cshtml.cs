@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using DataLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Caching.Memory;
 using ServiceLayer;
 
 namespace WebApp.Pages.Shops
@@ -30,16 +31,19 @@ namespace WebApp.Pages.Shops
             _10 = 10,
         }
 
-        public IEnumerable<Shop> Shops { get; set; }
+        public IEnumerable<Shop> Shops { get; set; } = default!;
 
         [BindProperty(SupportsGet = true)]
-        public string SearchTerm { get; set; }
+        public string SearchTerm { get; set; } = default!;
   
         private readonly IShopService _ShopService = default!;
     
-        public ListModel(IShopService ShopService)
+        private readonly IMemoryCache _cache = default!;
+
+        public ListModel(IShopService shopService,IMemoryCache cache)
         {
-            _ShopService = ShopService;
+            _cache = cache;
+            _ShopService = shopService;
         }
     
         public void OnGet()
@@ -47,10 +51,9 @@ namespace WebApp.Pages.Shops
             ShopViewModel ShopModel = _ShopService.GetShopsByName(SearchTerm, CurrentPage, PageSize);
             Shops = ShopModel.Shops;
             Count = ShopModel.TotalCount;
-
-            int? shopId = HttpContext.Session.GetInt32("PageLastVisit");
-
-            if (shopId != null)
+            
+            int shopId = 0;
+            if (_cache.TryGetValue<int>("PageLastVisit",out shopId))
             {
                 ViewData["PageVisited"] = shopId;
             }

@@ -1,33 +1,31 @@
 # 8. Sessions
 
-I denne demo skifter vi cookies ud med en session variabel.
+I denne demo skifter session variabel ud med In memory caching.
 
 ## Webapp
 
 ### `Program.cs`
-Indsæt disse ting i middleware og services
-
-#### Services
-```C#
-builder.Services.AddDistributedMemoryCache();
-
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-```
-
-#### Middleware
-```C#
-app.UseSession();
-```
+Der behøves ikke at blive oprettet nogle services da servicen for caching er per default indlæst.
 
 ## `Detail.cshtml.cs`
-Udskift cookie funktionerne med sessions:
+
+Der Med dependecy injection injectes `IMemoryCache` 
+
 ```C#
-HttpContext.Session.SetInt32("PageLastVisit", shopId);
+    private readonly IMemoryCache _cache = default!;
+
+    public DetailModel(IShopService shopService,IMemoryCache cache)
+    {
+        _cache = cache;
+        _ShopService = shopService;
+    }
+```
+
+Udskift session med memoryCache:
+```C#
+    var options = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(2));
+
+    _cache.Set<int>("PageLastVisit",shopId,options);
 ```
 
 ## `List.cshtml.cs`
@@ -39,3 +37,5 @@ if (shopId != null)
     ViewData["PageVisited"] = shopId;
 }
 ```
+
+> Det er ikke den bedste metode at bruge caching på da alle kan se hvad den sidste har kigget på!

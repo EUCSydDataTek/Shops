@@ -1,7 +1,7 @@
 using DataLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 using ServiceLayer;
 
 namespace WebApp.Pages.Shops
@@ -12,9 +12,9 @@ namespace WebApp.Pages.Shops
 
         private readonly IShopService _ShopService = default!;
 
-        private readonly IMemoryCache _cache = default!;
+        private readonly IDistributedCache _cache = default!;
 
-        public DetailModel(IShopService shopService,IMemoryCache cache)
+        public DetailModel(IShopService shopService,IDistributedCache cache)
         {
             _cache = cache;
             _ShopService = shopService;
@@ -24,9 +24,7 @@ namespace WebApp.Pages.Shops
         {
             Shop = _ShopService.GetShopById(shopId);
 
-            var options = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(2));
-
-            _cache.Set<int>("PageLastVisit",shopId,options);
+            _cache.SetString("PageLastVisit",shopId.ToString());
 
             return Page();
         }

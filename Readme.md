@@ -5,16 +5,19 @@ I denne demo skifter session variabel ud med In memory caching.
 ## Webapp
 
 ### `Program.cs`
-Der behøves ikke at blive oprettet nogle services da servicen for caching er per default indlæst.
+Tilføj distributed memorycache service
+```C#
+builder.Services.AddDistributedMemoryCache();
+```
 
 ## `Detail.cshtml.cs`
 
 Der Med dependecy injection injectes `IMemoryCache` 
 
 ```C#
-    private readonly IMemoryCache _cache = default!;
+    private readonly IDistributedCache _cache = default!;
 
-    public DetailModel(IShopService shopService,IMemoryCache cache)
+    public DetailModel(IShopService shopService,IDistributedCache cache)
     {
         _cache = cache;
         _ShopService = shopService;
@@ -23,19 +26,14 @@ Der Med dependecy injection injectes `IMemoryCache`
 
 Udskift session med memoryCache:
 ```C#
-    var options = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(2));
-
-    _cache.Set<int>("PageLastVisit",shopId,options);
+    _cache.SetString("PageLastVisit",shopId.ToString());
 ```
+> Da det er en distributed cache vil den kun tage imod `string` eller `byte[]`
 
 ## `List.cshtml.cs`
 ```C#
-int? shopId = HttpContext.Session.GetInt32("PageLastVisit");
-
-if (shopId != null)
-{
+    int shopId = Convert.ToInt32(_cache.GetString("PageLastVisit"));
     ViewData["PageVisited"] = shopId;
-}
 ```
 
-> Det er ikke den bedste metode at bruge caching på da alle kan se hvad den sidste har kigget på!
+> Denne metode kan modre end memory cache men den er mere robust og kan udvides med en cache server (Næste branch)

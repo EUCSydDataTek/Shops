@@ -1,39 +1,28 @@
 # 8. Sessions
 
-I denne demo skifter session variabel ud med In memory caching.
+I denne demo opgraderer vi in memory distributed cache med en Redis cache server.
+
+Opret cache server med docker compose i roden af solutionen.
+´´´pwsh
+docker-compose up -d
+´´´
+> Docker compose kommer vi til senere.
 
 ## Webapp
 
+installer redis nuget pakke
+´´´pwsh
+    Install-Package Microsoft.Extensions.Caching.StackExchangeRedis
+´´´
+
 ### `Program.cs`
-Tilføj distributed memorycache service
-```C#
-builder.Services.AddDistributedMemoryCache();
+
+skift distributed memory cahche med redis chache
 ```
-
-## `Detail.cshtml.cs`
-
-Der Med dependecy injection injectes `IMemoryCache` 
-
-```C#
-    private readonly IDistributedCache _cache = default!;
-
-    public DetailModel(IShopService shopService,IDistributedCache cache)
+    builder.Services.AddStackExchangeRedisCache(options =>
     {
-        _cache = cache;
-        _ShopService = shopService;
-    }
+        options.Configuration = "localhost:6379";
+        options.InstanceName = "ShopCache";
+    });
 ```
 
-Udskift session med memoryCache:
-```C#
-    _cache.SetString("PageLastVisit",shopId.ToString());
-```
-> Da det er en distributed cache vil den kun tage imod `string` eller `byte[]`
-
-## `List.cshtml.cs`
-```C#
-    int shopId = Convert.ToInt32(_cache.GetString("PageLastVisit"));
-    ViewData["PageVisited"] = shopId;
-```
-
-> Denne metode kan modre end memory cache men den er mere robust og kan udvides med en cache server (Næste branch)

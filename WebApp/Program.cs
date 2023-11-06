@@ -8,13 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMemoryDb"));
 builder.Services.AddScoped<IShopService,ShopService>();
 
-builder.Services.AddDistributedMemoryCache();
-
-builder.Services.AddSession(options =>
+builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
+    options.Configuration = "localhost:6379";
+    options.InstanceName = "ShopCache";
 });
 
 // Add services to the container.
@@ -38,7 +35,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseSession();
 
 app.UseRouting();
 

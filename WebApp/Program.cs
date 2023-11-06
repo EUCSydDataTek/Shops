@@ -3,23 +3,20 @@ using System.Runtime.InteropServices;
 using DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Console;
+using Serilog;
+using Serilog.Extensions.Logging;
 using ServiceLayer;
+
+using var logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("log.txt")
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-{
-    builder.Logging.AddConsole();
-    builder.Logging.AddEventLog();
-}
-
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    builder.Logging.AddSystemdConsole();
-}
-
+builder.Logging.AddSerilog(logger);
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMemoryDb"));
 builder.Services.AddScoped<IShopService,ShopService>();

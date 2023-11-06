@@ -1,0 +1,24 @@
+2023-11-06 11:25:57.977 +01:00 [INF] User profile is available. Using 'C:\Users\jako5457\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2023-11-06 11:25:58.337 +01:00 [INF] Now listening on: https://localhost:7057
+2023-11-06 11:25:58.339 +01:00 [INF] Now listening on: http://localhost:5061
+2023-11-06 11:25:58.344 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2023-11-06 11:25:58.346 +01:00 [INF] Hosting environment: Development
+2023-11-06 11:25:58.347 +01:00 [INF] Content root path: C:\Users\jako5457\source\repos\jako5457\Shops\WebApp
+2023-11-06 11:26:00.776 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7057/ - -
+2023-11-06 11:26:00.862 +01:00 [INF] Executing endpoint '/Shops/List'
+2023-11-06 11:26:00.928 +01:00 [INF] Route matched with {page = "/Shops/List"}. Executing page /Shops/List
+2023-11-06 11:26:01.505 +01:00 [INF] Saved 9 entities to in-memory store.
+2023-11-06 11:26:01.527 +01:00 [INF] Executing handler method WebApp.Pages.Shops.ListModel.OnGet - ModelState is "Invalid"
+2023-11-06 11:26:01.711 +01:00 [INF] Executed handler method OnGet, returned result .
+2023-11-06 11:26:01.716 +01:00 [INF] Executing an implicit handler method - ModelState is "Invalid"
+2023-11-06 11:26:01.719 +01:00 [INF] Executed an implicit handler method, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult.
+2023-11-06 11:26:01.925 +01:00 [INF] Executed page /Shops/List in 991.231ms
+2023-11-06 11:26:01.929 +01:00 [INF] Executed endpoint '/Shops/List'
+2023-11-06 11:26:01.959 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7057/ - - - 200 - text/html;+charset=utf-8 1187.8947ms
+2023-11-06 11:26:01.963 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7057/_vs/browserLink - -
+2023-11-06 11:26:01.963 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7057/_framework/aspnetcore-browser-refresh.js - -
+2023-11-06 11:26:01.974 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7057/_framework/aspnetcore-browser-refresh.js - - - 200 12344 application/javascript;+charset=utf-8 10.3793ms
+2023-11-06 11:26:01.984 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7057/_vs/browserLink - - - 200 - text/javascript;+charset=UTF-8 20.3582ms
+2023-11-06 11:26:02.087 +01:00 [INF] Request starting HTTP/1.1 GET https://localhost:7057/lib/bootstrap/dist/js/bootstrap.bundle.min.js.map - -
+2023-11-06 11:26:02.117 +01:00 [INF] Sending file. Request path: '/lib/bootstrap/dist/js/bootstrap.bundle.min.js.map'. Physical path: 'C:\Users\jako5457\source\repos\jako5457\Shops\WebApp\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map'
+2023-11-06 11:26:02.119 +01:00 [INF] Request finished HTTP/1.1 GET https://localhost:7057/lib/bootstrap/dist/js/bootstrap.bundle.min.js.map - - - 200 327261 text/plain 31.8597ms

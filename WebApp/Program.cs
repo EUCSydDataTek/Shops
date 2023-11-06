@@ -9,8 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders();
 
-builder.Logging
-
 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 {
     builder.Logging.AddConsole();

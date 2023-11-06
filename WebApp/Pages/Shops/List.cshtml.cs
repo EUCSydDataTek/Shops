@@ -33,7 +33,7 @@ namespace WebApp.Pages.Shops
         public IEnumerable<Shop> Shops { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public string SearchTerm { get; set; }
+        public string SearchTerm { get; set; } = default!;
   
         private readonly IShopService _ShopService = default!;
     
@@ -46,14 +46,18 @@ namespace WebApp.Pages.Shops
         {
             ShopViewModel ShopModel = _ShopService.GetShopsByName(SearchTerm, CurrentPage, PageSize);
             Shops = ShopModel.Shops;
-            Count = ShopModel.TotalCount;
+            Count = ShopModel.TotalCount; 
 
-            int? shopId = HttpContext.Session.GetInt32("PageLastVisit");
-
-            if (shopId != null)
+            try
             {
-                ViewData["PageVisited"] = shopId;
+                int? shopId = HttpContext.Session.GetInt32("PageLastVisit");
+
+                if (shopId != null)
+                {
+                    ViewData["PageVisited"] = shopId;
+                }
             }
+            catch {}
         }
     }
 }

@@ -1,9 +1,27 @@
 using System;
+using System.Runtime.InteropServices;
 using DataLayer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Console;
 using ServiceLayer;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+
+builder.Logging
+
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+{
+    builder.Logging.AddConsole();
+    builder.Logging.AddEventLog();
+}
+
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+{
+    builder.Logging.AddSystemdConsole();
+}
+
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMemoryDb"));
 builder.Services.AddScoped<IShopService,ShopService>();

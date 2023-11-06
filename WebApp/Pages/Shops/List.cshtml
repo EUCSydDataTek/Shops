@@ -19,15 +19,17 @@
 </form>
 
 
+<profile name="Shoptable">
+    <table class="table">
+        <tbody>
+            @foreach (var Shop in Model.Shops)
+            {
+                <partial name="_ListItemPartial" model="Shop" />
+            }
+        </tbody>
+    </table>
+</profile>
 
-<table class="table">
-    <tbody>
-        @foreach (var Shop in Model.Shops)
-        {
-            <partial name="_ListItemPartial" model="Shop" />
-        }
-    </tbody>
-</table>
 
 <div>
     <ul class="pagination">

@@ -1,0 +1,49 @@
+body {
+    background-color: #202120;
+    color: darkgray;
+}
+
+table {
+    background-color: whitesmoke;
+}
+
+table tr td {
+    color: black;
+}
+
+.navbar {
+    background: rgb(0,58,59);
+    background: linear-gradient(90deg, rgba(0,58,59,1) 0%, rgba(0,0,101,1) 0%, rgba(0,28,121,1) 15%, rgba(0,89,193,1) 35%, rgba(0,212,255,1) 100%);
+}
+
+.navbar-brand {
+    font-family: 'Bauhaus 93';
+    font-size: 30px !important;
+    color: lightseagreen !important;
+}
+
+.navbar-brand:hover {
+    color: lightblue !important;
+}
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}

@@ -1,0 +1,9 @@
+[
+  {
+    "outputFileName": "wwwroot/css/SiteBundle.css",
+    "inputFiles": [
+      "wwwroot/css/DarkTheme.css",
+      "wwwroot/css/site.css"
+    ]
+  }
+]

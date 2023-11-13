@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using ServiceLayer;
+using System.Reflection;
 using System.Text;
 using WebApi.Mappers;
 using WebApi.Models;
@@ -12,6 +13,8 @@ using WebApi.Models;
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     [ApiController]
     public class ShopController : ControllerBase
     {
@@ -24,7 +27,16 @@ namespace WebApi.Controllers
             _Logger = logger;
         }
 
+        /// <summary>
+        /// Hent en shop med et specifikt ShopId
+        /// </summary>
+        /// <param name="shopId">ShopId'et fra den shop der skal hentes</param>
+        /// <returns>Shoppen der tilhører shopId</returns>
+        /// <response code="200">Returnerer shoppen som id'et tilhører</response>
+        /// <response code="404">Shoppen findes ikke</response>
         [HttpGet(Name = "GetShop")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetShop(int shopId)
         {
 
@@ -48,8 +60,17 @@ namespace WebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Opretter en Shop
+        /// </summary>
+        /// <param name="model">Shoppen som skal oprettes</param>
+        /// <returns>Returnerer den nyoprettede Shop</returns>
+        /// <response code="201">Shoppen er blevet oprettet</response>
+        /// <response code="422">Der skete en fejl under skriving til databasen</response>
         [HttpPost]
         [Route("create")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public IActionResult Create(ShopCreateModel model)
         {
             var NewShop = model.MapToShop();
@@ -65,8 +86,17 @@ namespace WebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Rediger en Shop
+        /// </summary>
+        /// <param name="model">Shoppen som skal redigeres</param>
+        /// <returns>Returnerer den redigerede shop</returns>
+        /// <response code="201">Shoppen er blevet redigeret</response>
+        /// <response code="422">Der skete en fejl under skriving til databasen</response>
         [HttpPut]
         [Route("edit")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public IActionResult Edit(ShopEditModel model) 
         {
             var shop = model.MaptoShop();
@@ -82,7 +112,20 @@ namespace WebApi.Controllers
             }       
         }
 
+        /// <summary>
+        /// Redigerer delvist en Shop
+        /// </summary>
+        /// <param name="shopId">ShopId på shoppen som skal redigeres</param>
+        /// <param name="patchDocument">Patch documentet som skal udføres på shoppen</param>
+        /// <returns>Returnerer den redigerede shop</returns>
+        /// <response code="201">Shoppen er blevet redigeret</response>
+        /// <response code="404">Shoppen findes ikke</response>
+        /// <response code="422">Der skete en fejl under skriving til databasen</response>
         [HttpPatch]
+        [Consumes("application/json-patch+json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public IActionResult EditPartially(int shopId,[FromBody] JsonPatchDocument<ShopModel> patchDocument)
         {
             Shop? shop = _shopService.GetShopById(shopId);
@@ -117,8 +160,19 @@ namespace WebApi.Controllers
             return CreatedAtAction("GetShop", new { shopId = model.ShopId },model);
         }
 
+        /// <summary>
+        /// Fjerner en shop
+        /// </summary>
+        /// <param name="Shopid">ShopId til shoppen som skal fjernes</param>
+        /// <returns>Ingenting</returns>
+        /// <response code="204">Shoppen blev slettet</response>
+        /// <response code="404">Shoppen findes ikke</response>
+        /// <response code="422">Der skete en fejl under skriving til databasen</response>
         [HttpDelete]
         [Route("remove")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public IActionResult Remove(int Shopid)
         {
             var shop = _shopService.GetShopById(Shopid);

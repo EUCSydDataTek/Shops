@@ -8,23 +8,31 @@ using WebApi.Models;
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
+    [Produces("application/json")]
     [ApiController]
     public class ShopsController : ControllerBase
     {
 
-        private readonly IShopService _shopService;
+        private readonly IShopService _ShopService;
 
         public ShopsController(IShopService shopService)
         {
-            _shopService = shopService;
+            _ShopService = shopService;
         }
 
+        /// <summary>
+        /// Henter En side med shops
+        /// </summary>
+        /// <param name="searchQuery">Søgning og paging af siden</param>
+        /// <returns>En side med shops</returns>
+        /// <response code="200">Har returneret shops</response> 
         [HttpGet]
         [HttpHead]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public List<ShopModel> GetShops([FromQuery] SearchQueryModel searchQuery)
         {
 
-            var model = _shopService.GetShopsByName(searchQuery.query,searchQuery.page,searchQuery.pageSize);
+            var model = _ShopService.GetShopsByName(searchQuery.query,searchQuery.page,searchQuery.pageSize);
 
             // Metadata i headeren
             Response.Headers.Add("Page", searchQuery.page.ToString());

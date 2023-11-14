@@ -13,7 +13,7 @@ using WebApi.Models;
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
-    [Consumes("application/json")]
+    [Consumes("application/json","text/oneline")]
     [Produces("application/json")]
     [ApiController]
     public class ShopController : ControllerBase
@@ -35,6 +35,7 @@ namespace WebApi.Controllers
         /// <response code="200">Returnerer shoppen som id'et tilhører</response>
         /// <response code="404">Shoppen findes ikke</response>
         [HttpGet(Name = "GetShop")]
+        [Produces("application/json", "text/oneline")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetShop(int shopId)

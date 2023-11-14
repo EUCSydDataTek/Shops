@@ -1,16 +1,24 @@
 using DataLayer;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using ServiceLayer;
 using System.Reflection;
+using WebApi.Formatters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers()
+builder.Services.AddControllers(options =>
+                {
+                    options.InputFormatters.Add(new OneLineInputFormatter());
+                    options.OutputFormatters.Add(new OneLineOutputFormatter());
+                })
                 .AddNewtonsoftJson();
+
+builder.Services.AddMvc();
 
 builder.Services.AddEndpointsApiExplorer();
 

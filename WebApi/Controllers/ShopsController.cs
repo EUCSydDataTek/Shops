@@ -8,7 +8,7 @@ using WebApi.Models;
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
-    [Produces("application/json")]
+    [Produces("application/json", "application/xml")]
     [ApiController]
     public class ShopsController : ControllerBase
     {
@@ -28,6 +28,7 @@ namespace WebApi.Controllers
         /// <response code="200">Har returneret shops</response> 
         [HttpGet]
         [HttpHead]
+        [Produces("application/json", "text/oneline")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public List<ShopModel> GetShops([FromQuery] SearchQueryModel searchQuery)
         {
